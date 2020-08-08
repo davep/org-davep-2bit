@@ -168,6 +168,10 @@
   "Get the sequence named NAME from READER."
   (values (gethash name (index reader))))
 
+(defmethod seq ((reader reader) (name symbol))
+  "Get the sequence named NAME from READER."
+  (seq reader (let ((*print-case* :downcase)) (format nil "~S" name))))
+
 (defmethod print-object ((reader reader) stream)
   "Format READER for easy reading when output to STREAM."
   (print-unreadable-object (reader stream :type t)

@@ -209,13 +209,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High-level utility stuff.
 
-(defmacro with-2bit-data ((handle source) &body body)
-  "Perform BODY against data from SOURCE, naming reader as HANDLE."
-  `(let ((,handle (make-file-reader ,source)))
+(defmacro with-2bit-file ((handle file) &body body)
+  "Perform BODY against data from FILE, naming reader as HANDLE."
+  `(let ((,handle (make-file-reader ,file)))
      (open-reader ,handle)
      (unwind-protect
-          (prog1
-              (progn ,@body)
-            (close-reader ,handle)))))
+          (progn ,@body)
+       (close-reader ,handle))))
 
 ;;; 2bit.lisp ends here

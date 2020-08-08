@@ -164,6 +164,10 @@
   "Returns a list of the names of all sequences found in READER."
   (loop for name being the hash-keys of (index reader) collect name))
 
+(defmethod seq ((reader reader) (name string))
+  "Get the sequence named NAME from READER."
+  (values (gethash name (index reader))))
+
 (defmethod print-object ((reader reader) stream)
   "Format READER for easy reading when output to STREAM."
   (print-unreadable-object (reader stream :type t)

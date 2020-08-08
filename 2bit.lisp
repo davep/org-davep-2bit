@@ -109,6 +109,14 @@
   "Does the 2bit data have a valid signature?"
   (or (big-endian-p reader) (little-endian-p reader)))
 
+(defmethod get-pos ((reader reader))
+  "Get the current data position."
+  (error 'not-implemented))
+
+(defmethod set-pos ((reader reader) pos)
+  "Set the current data poition."
+  (error 'not-implemented))
+
 (defmethod byte-read ((reader reader))
   "Read a byte from READER"
   (error 'not-implemented))
@@ -187,6 +195,14 @@
 (defun make-file-reader (source)
   "Create a new instance of a 2bit file-reader, reading from SOURCE."
   (make-instance 'file-reader :source source))
+
+(defmethod get-pos ((reader file-reader))
+  "Get the current data position."
+  (file-position (file reader)))
+
+(defmethod set-pos ((reader file-reader) pos)
+  "Set the current data position."
+  (file-position (file reader) pos))
 
 (defmethod byte-read ((reader file-reader))
   "Read a byte from READER."

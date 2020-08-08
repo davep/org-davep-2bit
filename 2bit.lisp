@@ -217,7 +217,7 @@
        (ash (aref buffer 2) 16)
        (ash (aref buffer 3) 24))))
 
-(defmethod string-read ((reader reader) (len integer))
+(defmethod string-read ((reader file-reader) (len integer))
   "Read a string of LEN length from READER."
   (let ((buffer (make-array len :element-type '(unsigned-byte 8))))
     (read-sequence buffer (file reader))

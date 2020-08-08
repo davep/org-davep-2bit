@@ -10,6 +10,16 @@
 (defconstant +be-signature+ #x4327411a
   "Big-endian 2bit file signature.")
 
+(defmacro with-saved-location ((reader pos) &rest body)
+  "Helper macro to save position while visiting elsewhere in the data."
+  (let ((old-pos (gensym)))
+    `(let ((,old-pos (get-pos ,reader)))
+       (unwind-protect
+            (progn
+              (set-pos ,reader ,pos)
+              ,@body)
+         (set-pos ,reader ,old-pos)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The sequence access class.
 

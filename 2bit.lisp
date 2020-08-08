@@ -133,9 +133,9 @@
   ;; Set up a new hash table to hold the index.
   (let ((index (make-hash-table :test #'equal)))
     ;; Now loop over all the entries in the index and add them to the table.
-    (loop for n from 1 to (sequence-count reader) do (load-index-entry reader index))
-    ;; Return the index.
-    index))
+    (loop for n from 1 to (sequence-count reader)
+          do (load-index-entry reader index)
+          finally (return index))))
 
 (defmethod open-reader ((reader reader))
   "Open READER for further reading."

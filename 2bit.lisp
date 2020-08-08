@@ -160,6 +160,10 @@
   ;; object.
   reader)
 
+(defmethod sequences ((reader reader))
+  "Returns a list of the names of all sequences found in READER."
+  (loop for name being the hash-keys of (index reader) collect name))
+
 (defmethod print-object ((reader reader) stream)
   "Format READER for easy reading when output to STREAM."
   (print-unreadable-object (reader stream :type t)

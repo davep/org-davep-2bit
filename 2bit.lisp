@@ -43,7 +43,11 @@
     :initarg       :masking
     :initform      t
     :type          boolean
-    :documentation "Should masking be taken into account?"))
+    :documentation "Should masking be taken into account?")
+   (dna-size
+    :accessor      dna-size
+    :type          integer
+    :documentation "Size of the DNA in the sequence."))
   (:documentation "Class that provides access to a specific sequence."))
 
 (defmethod print-object ((sequence 2bit-sequence) stream)
@@ -53,10 +57,16 @@
 
 (defun make-2bit-sequence (reader name offset)
   "Crete a new 2bit sequence object."
-  (make-instance '2bit-sequence
-                 :reader reader
-                 :name   name
-                 :offset offset))
+  ;; Create a sequence object.
+  (let ((seq (make-instance '2bit-sequence
+                            :reader reader
+                            :name   name
+                            :offset offset)))
+    (with-saved-location (reader offset)
+      ;; Get the size of the DNA.
+      (setf (dna-size seq) (long-read reader))
+      ;; Return the new sequence.
+      seq)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main reader class. This does the work of pulling information out of

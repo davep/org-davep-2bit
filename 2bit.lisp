@@ -78,7 +78,15 @@
    (dna-size
     :accessor      dna-size
     :type          integer
-    :documentation "Size of the DNA in the sequence."))
+    :documentation "Size of the DNA in the sequence.")
+   (n-blocks
+    :accessor      n-blocks
+    :type          block-collection
+    :documentation "Details of the blocks of Ns in the sequence.")
+   (mask-blocks
+    :accessor      mask-blocks
+    :type          block-collection
+    :documentation "Details of the masked blocks in the sequence."))
   (:documentation "Class that provides access to a specific sequence."))
 
 (defmethod print-object ((sequence 2bit-sequence) stream)
@@ -96,6 +104,10 @@
     (with-saved-location (reader offset)
       ;; Get the size of the DNA.
       (setf (dna-size seq) (long-read reader))
+      ;; Get the N-block information.
+      (setf (n-blocks seq) (make-block-collection reader))
+      ;; Get the mask block information.
+      (setf (mask-blocks seq) (make-block-collection reader))
       ;; Return the new sequence.
       seq)))
 

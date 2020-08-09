@@ -29,6 +29,10 @@ for them.")
               ,@body)
          (setf (pos ,reader) ,old-pos)))))
 
+;; Local Variables:
+;; eval: (put 'with-saved-location 'common-lisp-indent-function 1)
+;; End:
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The sequence access class.
 

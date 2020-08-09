@@ -56,6 +56,7 @@
 
 (defclass 2bit-sequence ()
   ((reader
+    :accessor      reader
     :initarg       :reader
     :type          reader
     :documentation "The reader object to use to read the sequence from the 2bit data.")

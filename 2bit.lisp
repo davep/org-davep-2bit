@@ -144,6 +144,7 @@ BLOCKS that intersect with the sequence bounded by START and END."
          (end-byte   (+ (dna-offset sequence) (floor (/ (1- end ) 4))))
          (position   (* (- start-byte (dna-offset sequence)) 4))
          (buffer     (bytes-read (reader sequence) (1+ (- end-byte start-byte))))
+         (n-blocks   (relevant-blocks start end (n-blocks sequence)))
          (out        (make-string-output-stream)))
     (loop
       ;; For each byte in the buffer..
@@ -156,9 +157,13 @@ BLOCKS that intersect with the sequence bounded by START and END."
            ;; ...if we're interested in this particular base...
            if (>= position start)
              ;; ...collect it
-             ;; TODO: Handle N blocks.
              do (princ
-                 (elt +bases+ (ash (logand (ash #b11 shift) byte) (- shift)))
+                 ;; If the position we're looking at is within an N block...
+                 (if (loop for block in n-blocks thereis (and (< (1- (car block)) position (cdr block))))
+                     ;; ...it's an N, obviously.
+                     "N"
+                     ;; ...otherwise decode the base.
+                     (elt +bases+ (ash (logand (ash #b11 shift) byte) (- shift))))
                  out)
            do (incf position)))    ;; Bump the base position along one.
     (get-output-stream-string out)))

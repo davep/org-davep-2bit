@@ -13,12 +13,12 @@
 (defmacro with-saved-location ((reader pos) &rest body)
   "Helper macro to save position while visiting elsewhere in the data."
   (let ((old-pos (gensym)))
-    `(let ((,old-pos (get-pos ,reader)))
+    `(let ((,old-pos (pos ,reader)))
        (unwind-protect
             (progn
-              (set-pos ,reader ,pos)
+              (setf (pos ,reader) ,pos)
               ,@body)
-         (set-pos ,reader ,old-pos)))))
+         (setf (pos ,reader) ,old-pos)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The sequence access class.
@@ -129,12 +129,12 @@
   "Does the 2bit data have a valid signature?"
   (or (big-endian-p reader) (little-endian-p reader)))
 
-(defmethod get-pos ((reader reader))
+(defmethod pos ((reader reader))
   "Get the current data position."
   (error 'not-implemented))
 
-(defmethod set-pos ((reader reader) pos)
-  "Set the current data poition."
+(defmethod (setf pos) (pos (reader reader))
+  "Set the current data position."
   (error 'not-implemented))
 
 (defmethod byte-read ((reader reader))
@@ -216,11 +216,11 @@
   "Create a new instance of a 2bit file-reader, reading from SOURCE."
   (make-instance 'file-reader :source source))
 
-(defmethod get-pos ((reader file-reader))
+(defmethod pos ((reader file-reader))
   "Get the current data position."
   (file-position (file reader)))
 
-(defmethod set-pos ((reader file-reader) pos)
+(defmethod (setf pos) (pos (reader file-reader))
   "Set the current data position."
   (file-position (file reader) pos))
 

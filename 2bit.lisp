@@ -10,6 +10,12 @@
 (defconstant +be-signature+ #x4327411a
   "Big-endian 2bit file signature.")
 
+(defconstant +bases+ #("T" "C" "A" "G")
+  "Vector of the bases.
+
+Note that the positions of each base in the vector map to the 2bit decoding
+for them.")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General utility functions and macros.
 
@@ -121,6 +127,31 @@
       (setf (dna-offset seq) (pos reader))
       ;; Return the new sequence.
       seq)))
+
+(defmethod bases ((sequence 2bit-sequence) (start integer) (end integer))
+  "Get the bases between START and END from SEQUENCE."
+  (let* ((start-byte (+ (dna-offset sequence) (floor (/ start 4))))
+         (end-byte   (+ (dna-offset sequence) (floor (/ (1- end ) 4))))
+         (position   (* (- start-byte (dna-offset sequence)) 4))
+         (buffer     (bytes-read (reader sequence) (1+ (- end-byte start-byte))))
+         (out        (make-string-output-stream)))
+    (loop
+      ;; For each byte in the buffer..
+      for byte across buffer
+      do (loop
+           ;; For each 2 bits in the byte...
+           for shift in '(6 4 2 0)
+           ;; ...while we've not hit the end of what we're interested in...
+           while (< position end)
+           ;; ...if we're interested in this particular base...
+           if (>= position start)
+             ;; ...collect it
+             ;; TODO: Handle N blocks.
+             do (princ
+                 (elt +bases+ (ash (logand (ash #b11 shift) byte) (- shift)))
+                 out)
+           do (incf position)))    ;; Bump the base position along one.
+    (get-output-stream-string out)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main reader class. This does the work of pulling information out of

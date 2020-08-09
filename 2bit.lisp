@@ -26,6 +26,34 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The sequence access class.
 
+(defclass block-collection ()
+  ((count
+    :accessor block-count
+    :type    integer
+    :documentation "The number of blocks in the sequence.")
+   (starts
+    :accessor block-starts
+    :type     list
+    :initform nil
+    :documentation "List of 0-based integers indicating the start position of each block")
+   (sizes
+    :accessor block-sizes
+    :type     list
+    :documentation "List of integers indicating the length of each block"))
+  (:documentation "Holds details of a collection of blocks in a sequence."))
+
+(defun make-block-collection (reader)
+  "Create a block collection based on the current position in the reader."
+  (let ((blocks (make-instance 'block-collection)))
+    ;; Get the count of blocks.
+    (setf (block-count blocks) (long-read reader))
+    ;; Next up is the list of block start positions.
+    (setf (block-starts blocks) (loop for block from 1 to (block-count blocks) collect (long-read reader)))
+    ;; Finally there's the lengths of the blocks.
+    (setf (block-sizes blocks) (loop for block from 1 to (block-count blocks) collect (long-read reader)))
+    ;; Return the new object.
+    blocks))
+
 (defclass 2bit-sequence ()
   ((reader
     :initarg       :reader

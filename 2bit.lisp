@@ -141,7 +141,7 @@ BLOCKS that intersect with the sequence bounded by START and END."
 (defmethod bases ((sequence 2bit-sequence) (start integer) (end integer))
   "Get the bases between START and END from SEQUENCE."
   (let* ((start-byte (+ (dna-offset sequence) (floor (/ start 4))))
-         (end-byte   (+ (dna-offset sequence) (floor (/ (1- end ) 4))))
+         (end-byte   (+ (dna-offset sequence) (floor (/ (1- end) 4))))
          (position   (* (- start-byte (dna-offset sequence)) 4))
          (buffer     (bytes-read (reader sequence) (1+ (- end-byte start-byte))))
          (n-blocks   (relevant-blocks start end (n-blocks sequence)))

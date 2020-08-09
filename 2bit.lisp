@@ -198,9 +198,13 @@
   "Read a long (4-byte) numeric value from READER."
   (error 'not-implemented))
 
+(defmethod bytes-read ((reader reader) (len integer))
+  "Read an array of bytes from READER."
+  (error 'not-implemented))
+
 (defmethod string-read ((reader reader) (len integer))
   "Read a string of LEN length from READER."
-  (error 'not-implemented))
+  (map 'string #'code-char (bytes-read reader len)))
 
 (defmethod load-index-entry ((reader reader) (index hash-table))
   ;; We should be looking at the size of the name of the next entry in the
@@ -290,11 +294,11 @@
        (ash (aref buffer 2) 16)
        (ash (aref buffer 3) 24))))
 
-(defmethod string-read ((reader file-reader) (len integer))
-  "Read a string of LEN length from READER."
+(defmethod bytes-read ((reader file-reader) (len integer))
+  "Read an array ofbytes of LEN length from READER."
   (let ((buffer (make-array len :element-type '(unsigned-byte 8))))
     (read-sequence buffer (file reader))
-    (map 'string #'code-char buffer)))
+    buffer))
 
 (defmethod open-reader :before ((reader file-reader))
   "Open READER for further reading."

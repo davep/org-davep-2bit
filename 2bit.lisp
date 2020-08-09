@@ -86,7 +86,11 @@
    (mask-blocks
     :accessor      mask-blocks
     :type          block-collection
-    :documentation "Details of the masked blocks in the sequence."))
+    :documentation "Details of the masked blocks in the sequence.")
+   (dna-offset
+    :accessor      dna-offset
+    :type          integer
+    :documentation "The location in the data where the actual DNA data starts."))
   (:documentation "Class that provides access to a specific sequence."))
 
 (defmethod print-object ((sequence 2bit-sequence) stream)
@@ -108,6 +112,12 @@
       (setf (n-blocks seq) (make-block-collection reader))
       ;; Get the mask block information.
       (setf (mask-blocks seq) (make-block-collection reader))
+      ;; Skip a reserved value.
+      (long-read reader)
+      ;; Finally, record where we ended up as this is where the actual
+      ;; sequence data starts and we'll want to constantly revisit this
+      ;; location.
+      (setf (dna-offset seq) (pos reader))
       ;; Return the new sequence.
       seq)))
 

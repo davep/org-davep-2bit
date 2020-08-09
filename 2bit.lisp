@@ -10,6 +10,9 @@
 (defconstant +be-signature+ #x4327411a
   "Big-endian 2bit file signature.")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; General utility functions and macros.
+
 (defmacro with-saved-location ((reader pos) &rest body)
   "Helper macro to save position while visiting elsewhere in the data."
   (let ((old-pos (gensym)))

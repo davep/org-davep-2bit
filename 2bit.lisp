@@ -60,6 +60,16 @@ for them.")
     ;; Return the new object.
     blocks))
 
+(defmethod relevant-blocks ((sequence-start integer) (sequence-end integer) (blocks block-collection))
+  "Return a list of relevant start/end positions from BLOCKS.
+
+The return value isn't all the blocks in BLOCKS, but is all the blocks in
+BLOCKS that intersect with the sequence bounded by START and END."
+  (loop for start in (block-starts blocks)
+        for size  in (block-sizes blocks)
+        if (and (>= sequence-end start) (> (+ start size) sequence-start))
+          collect (cons start (+ start size))))
+
 (defclass 2bit-sequence ()
   ((reader
     :accessor      reader

@@ -142,6 +142,46 @@ BLOCKS that intersect with the sequence bounded by START and END."
       ;; Return the new sequence.
       seq)))
 
+(define-condition invalid-location (error)
+  ((reason
+    :initarg  :reason
+    :initform ""
+    :reader   reason)
+   (start
+    :initarg  :start
+    :initform nil
+    :reader   start)
+   (end
+    :initarg  :end
+    :initform nil
+    :reader   end))
+  (:documentation "Error thrown when a request for bases has a location problem."))
+
+(defmethod bases :before ((sequence 2bit-sequence) (start integer) (end integer))
+  "Perform checks on START and END in relation to SEQUENCE.
+
+This :before method ensures that START and END are within bounds."
+  (when (> start end)
+    (error 'invalid-location
+           :reason "Start is greater than the end"
+           :start  start
+           :end    end))
+  (when (< start 0)
+    (error 'invalid-location
+           :reason "Start is less than 0"
+           :start  start
+           :end    end))
+  (when (>= start (dna-size sequence))
+    (error 'invalid-location
+           :reason "Start is beyond the end of the sequence"
+           :start  start
+           :end    end))
+  (when (> end (dna-size sequence))
+    (error 'invalid-location
+           :reason "End is beyond the end of the sequence"
+           :start  start
+           :end    end)))
+
 (defmethod bases ((sequence 2bit-sequence) (start integer) (end integer))
   "Get the bases between START and END from SEQUENCE."
   (let* ((start-byte (+ (dna-offset sequence) (floor (/ start 4))))

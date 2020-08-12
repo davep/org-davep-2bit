@@ -161,9 +161,9 @@ BLOCKS that intersect with the sequence bounded by START and END."
   "Perform checks on START and END in relation to SEQUENCE.
 
 This :before method ensures that START and END are within bounds."
-  (when (> start end)
+  (when (>= start end)
     (error 'invalid-location
-           :reason "Start is greater than the end"
+           :reason "Start is greater than or equal to the end"
            :start  start
            :end    end))
   (when (< start 0)

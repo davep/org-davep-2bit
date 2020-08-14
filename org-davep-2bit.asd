@@ -16,7 +16,7 @@
 
 (in-package :org-davep-2bit-system)
 
-(defsystem org-davep-dict
+(defsystem org-davep-2bit
   :name        "org-davep-2bit"
   :author      "Dave Pearson <davep@davep.org>"
   :maintainer  "Dave Pearson <davep@davep.org>"

@@ -1,3 +1,25 @@
+;;; org-davep-2bit --- 2bit file reader for Common Lisp.
+;;
+;; 2bit.lisp --- Main code for org-davep-2bit.
+;; Copyright 2020 by Dave Pearson <davep@davep.org>
+;;
+;; This software is Copyright (C) Dave Pearson <davep@davep.org> 2020
+;;
+;; Dave Pearson grants you the rights to distribute and use this software as
+;; governed by the terms of the Lisp Lesser GNU Public License
+;; <URL:http://opensource.franz.com/preamble.html>, known as the LLGPL.
+
+;;; Commentary:
+;;
+;; The following code provides a set of classes and functions for reading
+;; data from 2bit files. The format of such a file is described here:
+;;
+;; http://genome.ucsc.edu/FAQ/FAQformat.html#format7
+;;
+;; You can always find the latest version of this code here:
+;;
+;; https://github.com/davep/org-davep-2bit
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful constants.
 

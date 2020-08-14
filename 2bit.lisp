@@ -20,6 +20,10 @@
 ;;
 ;; https://github.com/davep/org-davep-2bit
 
+;;; Code:
+
+(in-package :org.davep.2bit)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful constants.
 

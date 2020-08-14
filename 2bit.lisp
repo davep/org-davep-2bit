@@ -300,6 +300,14 @@ This :before method ensures that START and END are within bounds."
   "Does the 2bit data have a valid signature?"
   (or (big-endian-p reader) (little-endian-p reader)))
 
+(defmethod endian ((reader reader))
+  "Return a keyword to say what form of endian READER is.
+
+Possible values are :BIG, :LITTLE and :UNKNOWN."
+  (cond ((big-endian-p reader) :big)
+        ((little-endian-p reader) :little)
+        (t :unknown)))
+
 (defmethod pos ((reader reader))
   "Get the current data position."
   (error 'not-implemented))

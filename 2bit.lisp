@@ -363,6 +363,10 @@ This :before method ensures that START and END are within bounds."
   ;; object.
   reader)
 
+(defmethod close-reader ((reader reader))
+  "Close READER."
+  (error 'not-implemented))
+
 (defmethod sequences ((reader reader))
   "Returns a list of the names of all sequences found in READER."
   (loop for name being the hash-keys of (index reader) collect name))

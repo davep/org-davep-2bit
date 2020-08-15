@@ -13,7 +13,7 @@ de-rust my rusty Common Lisp knowledge and to get used to
 
 Things left to do include at least:
 
-- [ ] Add masking support.
+- [X] Add masking support.
 - [ ] Handle big-endian files.
 - [ ] Documentation
 

@@ -116,12 +116,6 @@ BLOCKS that intersect with the sequence bounded by START and END."
     :initarg       :offset
     :type          integer
     :documentation "The offset of the sequence in the 2bit data.")
-   (masking
-    :accessor      masking
-    :initarg       :masking
-    :initform      t
-    :type          boolean
-    :documentation "Should masking be taken into account?")
    (dna-size
     :accessor      dna-size
     :type          integer
@@ -213,10 +207,11 @@ This :before method ensures that START and END are within bounds."
   (let* ((start-byte (+ (dna-offset sequence) (floor (/ start 4))))
          (end-byte   (+ (dna-offset sequence) (floor (/ (1- end) 4))))
          (position   (* (- start-byte (dna-offset sequence)) 4))
-         (buffer     (with-saved-location ((reader sequence) start-byte)
-                       (bytes-read (reader sequence) (1+ (- end-byte start-byte)))))
-         (n-blocks   (relevant-blocks start end (n-blocks sequence)))
-         (out        (make-string-output-stream)))
+         (buffer      (with-saved-location ((reader sequence) start-byte)
+                        (bytes-read (reader sequence) (1+ (- end-byte start-byte)))))
+         (n-blocks    (relevant-blocks start end (n-blocks sequence)))
+         (mask-blocks (relevant-blocks start end (mask-blocks sequence)))
+         (out         (make-string-output-stream)))
     (loop
       ;; For each byte in the buffer..
       for byte across buffer
@@ -234,9 +229,16 @@ This :before method ensures that START and END are within bounds."
                      ;; ...it's an N, obviously.
                      "N"
                      ;; ...otherwise decode the base.
-                     (elt +bases+ (ash (logand (ash #b11 shift) byte) (- shift))))
+                     (let ((base (elt +bases+ (ash (logand (ash #b11 shift) byte) (- shift)))))
+                       ;; If we're masking and this base is within a masked region...
+                       (if (and (masking (reader sequence))
+                                (loop for block in mask-blocks thereis (and (< (1- (car block)) position (cdr block)))))
+                           ;; ...downcase the base...
+                           (string-downcase base)
+                           ;; ...otherwise go with it as-is.
+                           base)))
                  out)
-           do (incf position)))    ;; Bump the base position along one.
+           do (incf position))) ;; Bump the base position along one.
     (get-output-stream-string out)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -264,6 +266,12 @@ This :before method ensures that START and END are within bounds."
     :accessor      sequence-count
     :type          integer
     :documentation "The count of sequences inside the 2bit data.")
+   (masking
+    :accessor      masking
+    :initarg       :masking
+    :initform      t
+    :type          boolean
+    :documentation "Should masking be taken into account?")
    (index
     :accessor      index
     :type          hash-table
@@ -390,7 +398,7 @@ Possible values are :BIG, :LITTLE and :UNKNOWN."
 (defmethod print-object ((reader reader) stream)
   "Format READER for easy reading when output to STREAM."
   (print-unreadable-object (reader stream :type t)
-    (format stream "~S" (source reader))))
+    (format stream "~S :masking ~S" (source reader) (masking reader))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 2bit data reader class that reads from a local file.
@@ -399,9 +407,9 @@ Possible values are :BIG, :LITTLE and :UNKNOWN."
   ((file :accessor file))
   (:documentation "Class that handles reading from 2bit data held in a local file."))
 
-(defun make-file-reader (source)
+(defun make-file-reader (source &key (masking t))
   "Create a new instance of a 2bit file-reader, reading from SOURCE."
-  (make-instance 'file-reader :source source))
+  (make-instance 'file-reader :source source :masking masking))
 
 (defmethod pos ((reader file-reader))
   "Get the current data position."
@@ -444,9 +452,9 @@ Possible values are :BIG, :LITTLE and :UNKNOWN."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High-level utility stuff.
 
-(defmacro with-2bit-file ((handle file) &body body)
+(defmacro with-2bit-file ((handle file &rest rest) &body body)
   "Perform BODY against data from FILE, naming reader as HANDLE."
-  `(let ((,handle (make-file-reader ,file)))
+  `(let ((,handle (make-file-reader ,file ,@rest)))
      (open-reader ,handle)
      (unwind-protect
           (progn ,@body)

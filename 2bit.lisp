@@ -308,7 +308,7 @@ This :before method ensures that START and END are within bounds."
 
 (defmethod swapped-p ((reader reader))
   "Is the data in READER byte-swapped?"
-  (= (swap-long (signature reader) +signature+)))
+  (= (swap-long (signature reader)) +signature+))
 
 (defmethod pos ((reader reader))
   "Get the current data position."

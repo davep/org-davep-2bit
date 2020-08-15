@@ -61,7 +61,7 @@ for them.")
 (defclass block-collection ()
   ((count
     :accessor block-count
-    :type    integer
+    :type     integer
     :documentation "The number of blocks in the sequence.")
    (starts
     :accessor block-starts

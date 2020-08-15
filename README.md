@@ -11,4 +11,10 @@ Right now this repo is in active development, giving me a fun project to
 de-rust my rusty Common Lisp knowledge and to get used to
 [SLIME](https://common-lisp.net/project/slime/) again.
 
+Things left to do include at least:
+
+- [ ] Add masking support.
+- [ ] Handle big-endian files.
+- [ ] Documentation
+
 [//]: # (README.md ends here)

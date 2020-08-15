@@ -27,6 +27,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful constants.
 
+(defconstant +byte+ '(unsigned-byte 8)
+  "Type of a byte array element.")
+
 (defconstant +2bit-version+ 0
   "The only valid version number of 2bit data.")
 
@@ -421,7 +424,7 @@ Possible values are :BIG, :LITTLE and :UNKNOWN."
 
 (defmethod long-read ((reader file-reader))
   "Read a long (4-byte) numeric value from READER."
-  (let ((buffer (make-array 4 :element-type '(unsigned-byte 8) :initial-element 0)))
+  (let ((buffer (make-array 4 :element-type +byte+ :initial-element 0)))
     (read-sequence buffer (file reader))
     (+ (aref buffer 0)
        (ash (aref buffer 1) 8)
@@ -430,7 +433,7 @@ Possible values are :BIG, :LITTLE and :UNKNOWN."
 
 (defmethod bytes-read ((reader file-reader) (len integer))
   "Read an array of bytes of LEN length from READER."
-  (let ((buffer (make-array len :element-type '(unsigned-byte 8))))
+  (let ((buffer (make-array len :element-type +byte+)))
     (read-sequence buffer (file reader))
     buffer))
 
@@ -439,7 +442,7 @@ Possible values are :BIG, :LITTLE and :UNKNOWN."
   ;; Start out by opening the source file for reading and hanging on to the
   ;; stream. Note that we don't do any sort of file checks here; we'll
   ;; simply let the normal file I/O errors bubble up.
-  (setf (file reader) (open (source reader) :element-type '(unsigned-byte 8))))
+  (setf (file reader) (open (source reader) :element-type +byte+)))
 
 (defmethod close-reader ((reader file-reader))
   "Close READER."

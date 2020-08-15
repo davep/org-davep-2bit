@@ -458,6 +458,7 @@ Possible values are :BIG, :LITTLE and :UNKNOWN."
 
 ;; Local Variables:
 ;; eval: (put 'with-saved-location 'common-lisp-indent-function 1)
+;; eval: (put 'with-2bit-file 'common-lisp-indent-function 1)
 ;; End:
 
 ;;; 2bit.lisp ends here

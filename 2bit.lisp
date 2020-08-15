@@ -55,10 +55,6 @@ for them.")
               ,@body)
          (setf (pos ,reader) ,old-pos)))))
 
-;; Local Variables:
-;; eval: (put 'with-saved-location 'common-lisp-indent-function 1)
-;; End:
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The sequence access class.
 
@@ -459,5 +455,9 @@ Possible values are :BIG, :LITTLE and :UNKNOWN."
      (unwind-protect
           (progn ,@body)
        (close-reader ,handle))))
+
+;; Local Variables:
+;; eval: (put 'with-saved-location 'common-lisp-indent-function 1)
+;; End:
 
 ;;; 2bit.lisp ends here

@@ -429,7 +429,7 @@ Possible values are :BIG, :LITTLE and :UNKNOWN."
        (ash (aref buffer 3) 24))))
 
 (defmethod bytes-read ((reader file-reader) (len integer))
-  "Read an array ofbytes of LEN length from READER."
+  "Read an array of bytes of LEN length from READER."
   (let ((buffer (make-array len :element-type '(unsigned-byte 8))))
     (read-sequence buffer (file reader))
     buffer))

@@ -55,6 +55,15 @@ for them.")
               ,@body)
          (setf (pos ,reader) ,old-pos)))))
 
+(declaim (inline swap-long))
+(defun swap-long (value)
+  "Swap the endianness of a long integer VALUE."
+  (logior
+   (logand (ash value -24) #xff)
+   (logand (ash value 8) #xff0000)
+   (logand (ash value -8) #xff00)
+   (logand (ash value 24) #xff000000)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The sequence access class.
 
@@ -294,7 +303,12 @@ This :before method ensures that START and END are within bounds."
 
 (defmethod valid-signature-p ((reader reader))
   "Does the 2bit data have a valid signature?"
-  (= (signature reader) +signature+))
+  (or (= (signature reader) +signature+)
+      (= (swap-long (signature reader)) +signature+)))
+
+(defmethod swapped-p ((reader reader))
+  "Is the data in READER byte-swapped?"
+  (= (swap-long (signature reader) +signature+)))
 
 (defmethod pos ((reader reader))
   "Get the current data position."
@@ -308,9 +322,16 @@ This :before method ensures that START and END are within bounds."
   "Read a byte from READER"
   (error 'not-implemented))
 
-(defmethod long-read ((reader reader))
+(defmethod raw-long-read ((reader reader))
   "Read a long (4-byte) numeric value from READER."
   (error 'not-implemented))
+
+(defmethod long-read ((reader reader))
+  "Read a long (4-byte) numeric value from READER."
+  (let ((value (raw-long-read reader)))
+    (if (swapped-p reader)
+        (swap-long value)
+        value)))
 
 (defmethod bytes-read ((reader reader) (len integer))
   "Read an array of bytes from READER."
@@ -339,7 +360,7 @@ This :before method ensures that START and END are within bounds."
 (defmethod open-reader ((reader reader))
   "Open READER for further reading."
   ;; Pull the signature out of the header.
-  (setf (signature reader) (long-read reader))
+  (setf (signature reader) (raw-long-read reader))
   ;; Does the signature look valid?
   (unless (valid-signature-p reader)
     (error 'invalid-signature :signature (signature reader)))
@@ -403,7 +424,7 @@ This :before method ensures that START and END are within bounds."
   "Read a byte from READER."
   (read-byte (file reader)))
 
-(defmethod long-read ((reader file-reader))
+(defmethod raw-long-read ((reader file-reader))
   "Read a long (4-byte) numeric value from READER."
   (let ((buffer (make-array 4 :element-type +byte+ :initial-element 0)))
     (read-sequence buffer (file reader))

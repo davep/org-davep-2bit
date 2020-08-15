@@ -14,7 +14,7 @@ de-rust my rusty Common Lisp knowledge and to get used to
 Things left to do include at least:
 
 - [X] Add masking support.
-- [ ] Handle big-endian files.
+- [X] Handle other-endian files.
 - [ ] Documentation
 
 [//]: # (README.md ends here)

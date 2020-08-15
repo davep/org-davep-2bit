@@ -33,11 +33,8 @@
 (defconstant +2bit-version+ 0
   "The only valid version number of 2bit data.")
 
-(defconstant +le-signature+ #x1a412743
-  "Little-endian 2bit file signature.")
-
-(defconstant +be-signature+ #x4327411a
-  "Big-endian 2bit file signature.")
+(defconstant +signature+ #x1a412743
+  "2bit file signature.")
 
 (defconstant +bases+ #("T" "C" "A" "G")
   "Vector of the bases.
@@ -295,25 +292,9 @@ This :before method ensures that START and END are within bounds."
   ()
   (:documentation "Type of error raised if a method hasn't been implemented."))
 
-(defmethod big-endian-p ((reader reader))
-  "Does the 2bit data have the signature of a big-endian file?"
-  (and (signature reader) (= (signature reader) +be-signature+)))
-
-(defmethod little-endian-p ((reader reader))
-  "Does the 2bit data have the signature of a little-endian file?"
-  (and (signature reader) (= (signature reader) +le-signature+)))
-
 (defmethod valid-signature-p ((reader reader))
   "Does the 2bit data have a valid signature?"
-  (or (big-endian-p reader) (little-endian-p reader)))
-
-(defmethod endianness ((reader reader))
-  "Return a keyword to say what form of endian READER is.
-
-Possible values are :BIG, :LITTLE and :UNKNOWN."
-  (cond ((big-endian-p reader) :big)
-        ((little-endian-p reader) :little)
-        (t :unknown)))
+  (= (signature reader) +signature+))
 
 (defmethod pos ((reader reader))
   "Get the current data position."

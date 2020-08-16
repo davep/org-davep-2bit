@@ -89,9 +89,9 @@ for them.")
     ;; Get the count of blocks.
     (setf (block-count blocks) (long-read reader))
     ;; Next up is the list of block start positions.
-    (setf (block-starts blocks) (loop for block from 1 to (block-count blocks) collect (long-read reader)))
+    (setf (block-starts blocks) (longs-read reader (block-count blocks)))
     ;; Finally there's the lengths of the blocks.
-    (setf (block-sizes blocks) (loop for block from 1 to (block-count blocks) collect (long-read reader)))
+    (setf (block-sizes blocks) (longs-read reader (block-count blocks)))
     ;; Return the new object.
     blocks))
 
@@ -340,6 +340,18 @@ This :before method ensures that START and END are within bounds."
 (defmethod string-read ((reader reader) (len integer))
   "Read a string of LEN length from READER."
   (map 'string #'code-char (bytes-read reader len)))
+
+(defmethod longs-read ((reader reader) (count integer))
+  "Read in a list of COUNT long (32-bit) values from READER."
+  (let ((buffer (bytes-read reader (* count 4))))
+    (loop for n from 0 below count
+          for pos = (* n 4)
+          for value = (logior
+                       (aref buffer pos)
+                       (ash (aref buffer (1+ pos )) 8)
+                       (ash (aref buffer (+ 2 pos)) 16)
+                       (ash (aref buffer (+ 3 pos)) 24))
+          collect (if (swapped-p reader) (swap-long value) value))))
 
 (defmethod load-index-entry ((reader reader) (index hash-table))
   "Read a single entry from READER and add to INDEX.

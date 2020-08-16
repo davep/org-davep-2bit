@@ -342,6 +342,11 @@ This :before method ensures that START and END are within bounds."
   (map 'string #'code-char (bytes-read reader len)))
 
 (defmethod load-index-entry ((reader reader) (index hash-table))
+  "Read a single entry from READER and add to INDEX.
+
+This method reads from the current position, reading the name of the entry
+in the index of sequences, and then reads its offset and adds that to
+INDEX."
   ;; We should be looking at the size of the name of the next entry in the
   ;; index. Grab that and make a buffer big enough to load it up.
   (let ((name (string-read reader (byte-read reader))))

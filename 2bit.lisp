@@ -433,10 +433,10 @@ INDEX."
   "Read a long (4-byte) numeric value from READER."
   (let ((buffer (make-array 4 :element-type +byte+ :initial-element 0)))
     (read-sequence buffer (file reader))
-    (+ (aref buffer 0)
-       (ash (aref buffer 1) 8)
-       (ash (aref buffer 2) 16)
-       (ash (aref buffer 3) 24))))
+    (logior (aref buffer 0)
+            (ash (aref buffer 1) 8)
+            (ash (aref buffer 2) 16)
+            (ash (aref buffer 3) 24))))
 
 (defmethod bytes-read ((reader file-reader) (len integer))
   "Read an array of bytes of LEN length from READER."

@@ -159,7 +159,7 @@ BLOCKS that intersect with the sequence bounded by START and END."
       ;; Get the mask block information.
       (setf (mask-blocks seq) (make-block-collection reader))
       ;; Skip a reserved value.
-      (long-read reader)
+      (raw-long-read reader)
       ;; Finally, record where we ended up as this is where the actual
       ;; sequence data starts and we'll want to constantly revisit this
       ;; location.
@@ -390,7 +390,7 @@ INDEX."
   ;; Finally, load up the sequence count.
   (setf (sequence-count reader) (long-read reader))
   ;; Skip a reserved log value.
-  (long-read reader)
+  (raw-long-read reader)
   ;; Now load up the index of the file.
   (setf (index reader) (read-index reader))
   ;; Finally, just to allow easy chaining of calls, return the reader

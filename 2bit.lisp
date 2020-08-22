@@ -60,8 +60,8 @@ for them.")
   "Swap the endianness of a long integer VALUE."
   (logior
    (logand (ash value -24) #xff)
-   (logand (ash value 8) #xff0000)
    (logand (ash value -8) #xff00)
+   (logand (ash value 8) #xff0000)
    (logand (ash value 24) #xff000000)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
